@@ -34,6 +34,32 @@ body {
   background-color: #fef08a;
 }
 
+.saved-card-action {
+  min-height: 38px;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.7rem;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  line-height: 1;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+}
+
+.saved-card-audio {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+
 .speaking-pulse {
   animation: pulse 1.5s infinite;
 }

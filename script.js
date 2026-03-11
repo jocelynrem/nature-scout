@@ -97,15 +97,16 @@ function renderGrid() {
       card.innerHTML = `
                         <img src="${photo}" class="absolute inset-0 w-full h-full object-cover">
                         <div class="absolute inset-0 bg-green-500 bg-opacity-10 pointer-events-none"></div>
-                        <div class="absolute top-1 right-1 left-1 flex justify-between items-start gap-1">
-                            <button type="button" class="bg-white/90 text-green-700 text-[8px] px-2 py-1 rounded-full font-black shadow" onclick="event.stopPropagation(); speakTaskClue('${task.id}')">Hear</button>
-                            <div class="flex gap-1">
-                                <button type="button" class="bg-yellow-300 text-gray-900 text-[8px] px-2 py-1 rounded-full font-black shadow" onclick="event.stopPropagation(); retakePhoto('${task.id}')">Retake</button>
-                                <button type="button" class="bg-red-500 text-white text-[8px] px-2 py-1 rounded-full font-black shadow" onclick="event.stopPropagation(); deletePhoto('${task.id}')">Delete</button>
-                            </div>
+                        <div class="absolute top-2 right-2 w-[5.25rem]">
+                            <button type="button" class="saved-card-action bg-red-500 text-white" onclick="event.stopPropagation(); deletePhoto('${task.id}')">
+                                <span class="text-base leading-none">🗑️</span>
+                                <span>Delete</span>
+                            </button>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-[9px] p-1 font-bold text-center leading-none">
-                            ${task.label} ✅ ${obs}
+                        <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-[9px] p-1 font-bold leading-none flex items-center justify-between gap-1">
+                            <button type="button" class="saved-card-audio" onclick="event.stopPropagation(); speakTaskFact('${task.id}')">🔊</button>
+                            <div class="flex-1 text-center">${task.label} ✅ ${obs}</div>
+                            <div class="w-5 shrink-0"></div>
                         </div>
                     `;
     } else {
@@ -129,10 +130,6 @@ function renderGrid() {
       .classList.replace('bg-green-800', 'bg-yellow-500');
     document.getElementById('progress-pills').innerText = `Gold Scout! 🏆`;
   }
-}
-
-function retakePhoto(taskId) {
-  openCamera(taskId);
 }
 
 function deletePhoto(taskId) {
@@ -245,6 +242,10 @@ function speakMainInstruction() {
 
 function speakTaskClue(taskId) {
   playAudio(`task-${taskId}-clue`);
+}
+
+function speakTaskFact(taskId) {
+  playAudio(`task-${taskId}-fact`);
 }
 
 async function playAudio(audioId) {
