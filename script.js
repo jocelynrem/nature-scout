@@ -1,66 +1,4 @@
-const apiKey = '';
-const tasks = [
-  {
-    id: 'sun',
-    label: 'Light Energy',
-    emoji: '☀️',
-    standard: 'LS.1.1',
-    fact: 'Plants use light to make their own food! This gives them the energy they need to grow.',
-  },
-  {
-    id: 'water',
-    label: 'Water Needs',
-    emoji: '💧',
-    standard: 'LS.1.1',
-    fact: 'All living things need water. Plants take in water through their roots to stay healthy.',
-  },
-  {
-    id: 'rock',
-    label: 'Earth Rock',
-    emoji: '🪨',
-    standard: 'ESS.1.2',
-    question: 'What does this rock feel like?',
-    options: ['Rough', 'Smooth', 'Hard', 'Pointy'],
-    fact: 'Earth materials like rocks can be described by their color, size, and texture!',
-  },
-  {
-    id: 'soil',
-    label: 'Nutrient Soil',
-    emoji: '🌱',
-    standard: 'ESS.1.2',
-    question: 'What color is the soil?',
-    options: ['Dark', 'Light', 'Red', 'Brown'],
-    fact: "Plants don't 'eat' soil, but they do get important nutrients and water from it!",
-  },
-  {
-    id: 'shelter',
-    label: 'Animal Shelter',
-    emoji: '🏠',
-    standard: 'LS.1.1',
-    fact: 'Animals use plants or other materials for shelter and nesting to stay safe and dry.',
-  },
-  {
-    id: 'resource',
-    label: 'Natural Resource',
-    emoji: '🌳',
-    standard: 'ESS.1.3',
-    fact: 'Humans depend on natural resources like trees for wood to build homes and paper.',
-  },
-  {
-    id: 'recycle',
-    label: 'Recycle Action',
-    emoji: '♻️',
-    standard: 'ESS.1.3',
-    fact: 'Materials like plastic and metal can be broken down and reused in a different form!',
-  },
-  {
-    id: 'litter',
-    label: 'Protect Nature',
-    emoji: '🗑️',
-    standard: 'ESS.1.3',
-    fact: 'Litter can hurt plants and animals. Keeping the environment clean helps everything grow.',
-  },
-];
+const { tasks, readAlouds } = window.NATURE_SCOUT_CONTENT;
 
 let activeTaskId = null;
 let photos = {};
@@ -68,11 +6,43 @@ let observations = {};
 let stream = null;
 let currentAudio = null;
 
+function getTaskById(taskId) {
+  return tasks.find((task) => task.id === taskId) || null;
+}
+
+function getFallbackText(audioId) {
+  if (audioId === 'intro') return readAlouds.intro;
+  if (audioId === 'main-instruction') return readAlouds.mainInstruction;
+
+  const match = audioId.match(/^task-(.+)-(clue|question|fact)$/);
+  if (!match) return null;
+
+  const [, taskId, kind] = match;
+  const task = getTaskById(taskId);
+  if (!task) return null;
+
+  if (kind === 'clue') return task.clue;
+  if (kind === 'question') return task.question;
+  if (kind === 'fact') return `Great discovery! ${task.fact}`;
+  return null;
+}
+
+function showAudioFallback(audioId) {
+  const fallbackText = getFallbackText(audioId);
+
+  if (!fallbackText) {
+    alert('This audio file is missing.');
+    return;
+  }
+
+  alert(fallbackText);
+}
+
 function startGame() {
   document.getElementById('start-screen').classList.add('hidden');
   document.getElementById('game-container').classList.remove('hidden');
   renderGrid();
-  speakText('Welcome Nature Scout! Tap a square to start your walk.');
+  playAudio('intro');
 }
 
 function renderGrid() {
@@ -100,7 +70,7 @@ function renderGrid() {
                         <div class="absolute top-1 left-1 bg-gray-100 text-gray-500 text-[8px] px-1.5 py-0.5 rounded-full font-bold">${task.standard}</div>
                         <div class="text-3xl md:text-5xl mb-1">${task.emoji}</div>
                         <div class="text-[10px] md:text-sm font-black text-gray-700 uppercase leading-none">${task.label}</div>
-                        <div class="absolute top-1 right-1 text-green-600" onclick="event.stopPropagation(); speakText('${task.label}')">
+                        <div class="absolute top-1 right-1 text-green-600" onclick="event.stopPropagation(); speakTaskClue('${task.id}')">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
                         </div>
                     `;
@@ -120,7 +90,7 @@ function renderGrid() {
 
 async function openCamera(taskId) {
   activeTaskId = taskId;
-  const task = tasks.find((t) => t.id === taskId);
+  const task = getTaskById(taskId);
   document.getElementById('target-label').innerText = task.label;
   const video = document.getElementById('video-preview');
   try {
@@ -150,7 +120,7 @@ function takePhoto() {
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
   photos[activeTaskId] = canvas.toDataURL('image/png');
   closeCamera();
-  const task = tasks.find((t) => t.id === activeTaskId);
+  const task = getTaskById(activeTaskId);
   if (task.question) showPropertySelection(task);
   else showSuccess(task);
 }
@@ -189,112 +159,63 @@ function closeSuccess() {
 }
 
 function speakCurrentTask() {
-  const task = tasks.find((t) => t.id === activeTaskId);
-  speakText(`Can you find ${task.label}?`);
+  const task = getTaskById(activeTaskId);
+  if (!task) return;
+  playAudio(`task-${task.id}-clue`);
 }
 
 function speakPropertyQuestion() {
-  const task = tasks.find((t) => t.id === activeTaskId);
-  speakText(task.question);
+  const task = getTaskById(activeTaskId);
+  if (!task) return;
+  playAudio(`task-${task.id}-question`);
 }
 
 function speakCurrentFact() {
-  const task = tasks.find((t) => t.id === activeTaskId);
-  speakText(`Great discovery! ${task.fact}`);
+  const task = getTaskById(activeTaskId);
+  if (!task) return;
+  playAudio(`task-${task.id}-fact`);
 }
 
-async function speakText(text) {
+function speakMainInstruction() {
+  playAudio('main-instruction');
+}
+
+function speakTaskClue(taskId) {
+  playAudio(`task-${taskId}-clue`);
+}
+
+async function playAudio(audioId) {
   stopSpeaking();
-  try {
-    const result = await callTTSWithRetry(text);
-    if (result) {
-      const sampleRateMatch = result.mimeType.match(/rate=(\d+)/);
-      const sampleRate = sampleRateMatch
-        ? parseInt(sampleRateMatch[1], 10)
-        : 24000;
-      const audioBuffer = base64ToUint8Array(result.inlineData.data);
-      const wavBlob = pcmToWav(audioBuffer, sampleRate);
-      const audioUrl = URL.createObjectURL(wavBlob);
-      currentAudio = new Audio(audioUrl);
-      currentAudio.play();
+  const audio = new Audio(`audio/${audioId}.wav`);
+  currentAudio = audio;
+
+  const fallbackToText = (error) => {
+    if (currentAudio === audio) {
+      currentAudio = null;
     }
-  } catch (e) {
-    console.error('TTS Failed', e);
+    console.warn(`Audio playback failed for ${audioId}`, error);
+    showAudioFallback(audioId);
+  };
+
+  audio.addEventListener(
+    'error',
+    () => fallbackToText(new Error('Missing or unreadable audio file.')),
+    { once: true },
+  );
+
+  try {
+    await audio.play();
+  } catch (error) {
+    fallbackToText(error);
   }
 }
 
 function stopSpeaking() {
   if (currentAudio) {
     currentAudio.pause();
+    currentAudio.currentTime = 0;
     currentAudio = null;
   }
-}
-
-async function callTTSWithRetry(text, retries = 0) {
-  const payload = {
-    contents: [{ parts: [{ text: text }] }],
-    generationConfig: {
-      responseModalities: ['AUDIO'],
-      speechConfig: {
-        voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Puck' } },
-      },
-    },
-  };
-  try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      },
-    );
-    const result = await response.json();
-    return result.candidates?.[0]?.content?.parts?.[0];
-  } catch (err) {
-    if (retries < 5) {
-      await new Promise((r) => setTimeout(r, Math.pow(2, retries) * 1000));
-      return callTTSWithRetry(text, retries + 1);
-    }
-    return null;
-  }
-}
-
-function base64ToUint8Array(base64) {
-  const binaryString = window.atob(base64);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes;
-}
-
-function pcmToWav(pcmData, sampleRate) {
-  const buffer = new ArrayBuffer(44 + pcmData.length);
-  const view = new DataView(buffer);
-  const writeString = (offset, string) => {
-    for (let i = 0; i < string.length; i++) {
-      view.setUint8(offset + i, string.charCodeAt(i));
-    }
-  };
-  writeString(0, 'RIFF');
-  view.setUint32(4, 32 + pcmData.length, true);
-  writeString(8, 'WAVE');
-  writeString(12, 'fmt ');
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, 1, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate * 2, true);
-  view.setUint16(32, 2, true);
-  view.setUint16(34, 16, true);
-  writeString(36, 'data');
-  view.setUint32(40, pcmData.length, true);
-  const pcmView = new Uint8Array(pcmData);
-  for (let i = 0; i < pcmData.length; i++) {
-    view.setUint8(44 + i, pcmView[i]);
-  }
-  return new Blob([view], { type: 'audio/wav' });
 }
 
 function setFullHeight() {
