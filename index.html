@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Nature Scout: Field Guide Adventure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="min-h-screen flex flex-col items-center">
+    <!-- Start Screen -->
+    <div
+      id="start-screen"
+      class="fixed inset-0 z-50 bg-green-600 flex flex-col items-center justify-center text-white p-6 text-center"
+    >
+      <div class="bg-white p-8 rounded-full mb-6">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-24 w-24 text-green-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+        </svg>
+      </div>
+      <h1 class="text-4xl font-bold mb-2">Nature Scout</h1>
+      <p class="text-lg opacity-90 mb-8 font-bold">
+        1st Grade Science Explorer
+      </p>
+      <button
+        onclick="startGame()"
+        class="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-black py-4 px-10 rounded-full text-2xl shadow-lg btn-bounce"
+      >
+        START WALK
+      </button>
+    </div>
+
+    <!-- Main UI -->
+    <div
+      id="game-container"
+      class="hidden w-full max-w-4xl mx-auto flex flex-col h-screen overflow-hidden"
+    >
+      <!-- Header -->
+      <header
+        class="bg-green-700 text-white p-3 flex justify-between items-center shadow-md shrink-0"
+      >
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🎒</span>
+          <h2 class="font-bold text-lg">Field Guide</h2>
+        </div>
+        <div
+          id="progress-pills"
+          class="text-sm bg-green-800 px-3 py-1 rounded-full font-bold"
+        >
+          0 / 8 Found
+        </div>
+      </header>
+
+      <!-- Viewport -->
+      <main
+        class="flex-grow relative bg-gray-200 flex flex-col overflow-hidden"
+      >
+        <div
+          id="mission-view"
+          class="p-3 space-y-2 flex flex-col h-full overflow-hidden"
+        >
+          <div
+            class="bg-yellow-50 border-2 border-yellow-200 p-2 rounded-xl shadow-sm flex items-center justify-between shrink-0"
+          >
+            <div class="flex items-center space-x-3">
+              <span class="text-2xl">👀</span>
+              <p
+                id="main-instr"
+                class="text-gray-800 font-bold leading-tight text-sm"
+              >
+                Tap a square to observe and take a picture!
+              </p>
+            </div>
+            <button
+              onclick="
+                speakText(document.getElementById('main-instr').innerText)
+              "
+              class="bg-green-100 p-2 rounded-full border-2 border-green-500 text-green-700 btn-bounce"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Grid of Items -->
+          <div
+            id="photo-grid"
+            class="grid grid-cols-2 md:grid-cols-4 gap-2 flex-grow h-full overflow-hidden"
+          >
+            <!-- Cards injected here -->
+          </div>
+        </div>
+
+        <!-- Camera View -->
+        <div id="camera-view" class="hidden absolute inset-0 z-40 bg-black">
+          <div
+            id="camera-instr-container"
+            class="absolute top-6 left-0 right-0 z-50 flex flex-col items-center space-y-2 px-4"
+          >
+            <span
+              class="bg-black bg-opacity-70 text-white px-4 py-2 rounded-full text-lg font-bold border-2 border-yellow-400 flex items-center space-x-2"
+            >
+              <span>Find: <span id="target-label"></span></span>
+              <button onclick="speakCurrentTask()" class="ml-2 text-yellow-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                  />
+                </svg>
+              </button>
+            </span>
+          </div>
+          <video id="video-preview" autoplay playsinline></video>
+          <div
+            class="camera-overlay absolute inset-0 pointer-events-none flex items-center justify-center"
+          >
+            <div class="w-64 h-64"></div>
+          </div>
+          <div
+            class="absolute bottom-10 left-0 right-0 flex justify-around items-center px-10"
+          >
+            <button
+              onclick="closeCamera()"
+              class="bg-red-500 text-white p-4 rounded-full shadow-lg btn-bounce"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-8 w-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <button
+              onclick="takePhoto()"
+              class="bg-white p-2 rounded-full shadow-2xl border-4 border-gray-300 btn-bounce"
+            >
+              <div
+                class="w-16 h-16 bg-red-500 rounded-full border-4 border-white"
+              ></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Property Selection Modal -->
+        <div
+          id="property-modal"
+          class="hidden absolute inset-0 z-50 bg-green-900 bg-opacity-95 flex flex-col items-center justify-center p-6 text-white"
+        >
+          <div class="bg-white rounded-3xl p-6 text-gray-800 w-full max-w-sm">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-xl font-black flex items-center">
+                <span class="mr-2">🔍</span> Describe It!
+              </h3>
+              <button
+                onclick="speakPropertyQuestion()"
+                class="bg-blue-100 text-blue-600 p-2 rounded-full"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <p id="property-question" class="mb-6 font-bold text-lg">
+              How does this material feel?
+            </p>
+            <div id="property-options" class="grid grid-cols-2 gap-4"></div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer Info -->
+      <footer
+        class="bg-white border-t p-2 flex justify-between items-center text-gray-400 text-[9px] font-bold uppercase tracking-widest shrink-0"
+      >
+        <span>Moore County Schools</span>
+        <span>LS.1.1 / ESS.1.2 / ESS.1.3</span>
+      </footer>
+    </div>
+
+    <!-- Success Modal -->
+    <div
+      id="success-modal"
+      class="hidden fixed inset-0 z-[60] bg-black bg-opacity-80 flex items-center justify-center p-4"
+    >
+      <div class="bg-white rounded-3xl p-6 text-center max-w-sm shadow-2xl">
+        <div class="text-5xl mb-2 animate-bounce">🌟</div>
+        <div class="flex justify-center items-center space-x-2 mb-1">
+          <h3 class="text-2xl font-black text-green-700">Scout Fact!</h3>
+          <button
+            onclick="speakCurrentFact()"
+            class="bg-green-100 text-green-600 p-2 rounded-full"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+              />
+            </svg>
+          </button>
+        </div>
+        <div
+          id="success-fact"
+          class="bg-green-50 p-4 rounded-xl text-gray-700 font-bold text-sm mb-6 border-l-4 border-green-500 italic"
+        ></div>
+        <button
+          onclick="closeSuccess()"
+          class="bg-green-600 text-white font-black py-4 px-8 rounded-full w-full shadow-lg btn-bounce text-xl uppercase"
+        >
+          ADD TO GUIDE
+        </button>
+      </div>
+    </div>
+
+    <canvas id="capture-canvas" class="hidden-canvas"></canvas>
+
+    <script src="script.js"></script>
+  </body>
+</html>
