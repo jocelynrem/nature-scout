@@ -1,10 +1,10 @@
 # Nature Scout
 
-Nature Scout is a small browser-based field guide app for first grade science exploration. It uses a single static page with Tailwind via CDN, custom CSS, plain JavaScript, and pre-generated audio files for read-aloud support.
+Nature Scout is a small browser-based field guide app for first grade science exploration. It uses a single static page with Bulma, Font Awesome, custom CSS, plain JavaScript, and pre-generated audio files for read-aloud support.
 
 ## Files
 
-- `index.html`: app markup and Tailwind utility classes
+- `index.html`: app markup with Bulma and Font Awesome
 - `content.js`: shared scavenger-hunt content and read-aloud text
 - `styles.css`: custom styles and animations
 - `script.js`: app logic for missions, camera capture, and text-to-speech
@@ -50,5 +50,5 @@ node scripts/generate-audio.cjs --force
 ## Notes
 
 - The app uses `navigator.mediaDevices.getUserMedia()` for camera capture.
-- Tailwind is loaded from the CDN in `index.html`.
+- Bulma and Font Awesome are loaded from CDNs in `index.html`.
 - Audio playback expects the generated files in `audio/`.

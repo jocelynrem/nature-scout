@@ -7,273 +7,181 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Nature Scout: Plants, Animals, and Earth Materials</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
+    />
+    <script
+      defer
+      src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"
+    ></script>
     <link rel="stylesheet" href="styles.css" />
     <script src="content.js"></script>
   </head>
-  <body class="min-h-screen flex flex-col items-center">
+  <body>
     <!-- Start Screen -->
-    <div
-      id="start-screen"
-      class="fixed inset-0 z-50 bg-green-600 flex flex-col items-center justify-center text-white p-6 text-center"
-    >
-      <div class="bg-white p-8 rounded-full mb-6">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-24 w-24 text-green-600"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-          />
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-        </svg>
+    <section id="start-screen" class="hero is-fullheight nature-start-screen">
+      <div class="hero-body">
+        <div class="container">
+          <div class="nature-start-shell">
+            <div class="nature-start-badge">
+              <span class="icon is-large">
+                <i class="fas fa-compass fa-3x"></i>
+              </span>
+            </div>
+            <p class="nature-kicker">Outdoor Science Walk</p>
+            <h1 class="title is-1 nature-start-title">Nature Scout</h1>
+            <p class="subtitle is-4 nature-start-subtitle">
+              1st Grade Plant and Rock Hunt
+            </p>
+            <button
+              onclick="startGame()"
+              class="button is-warning is-large nature-start-button btn-bounce"
+            >
+              <span class="icon"><i class="fas fa-shoe-prints"></i></span>
+              <span>Start Walk</span>
+            </button>
+          </div>
+        </div>
       </div>
-      <h1 class="text-4xl font-bold mb-2">Nature Scout</h1>
-      <p class="text-lg opacity-90 mb-8 font-bold">
-        1st Grade Plant and Rock Hunt
-      </p>
-      <button
-        onclick="startGame()"
-        class="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-black py-4 px-10 rounded-full text-2xl shadow-lg btn-bounce"
-      >
-        START WALK
-      </button>
-    </div>
+    </section>
+
+    <div class="nature-background-orb nature-orb-one"></div>
+    <div class="nature-background-orb nature-orb-two"></div>
 
     <!-- Main UI -->
-    <div
-      id="game-container"
-      class="hidden w-full max-w-4xl mx-auto flex flex-col h-screen overflow-hidden"
-    >
-      <!-- Header -->
-      <header
-        class="bg-green-700 text-white p-3 flex justify-between items-center shadow-md shrink-0"
-      >
-        <div class="flex items-center space-x-2">
-          <span class="text-2xl">🎒</span>
-          <h2 class="font-bold text-lg">First Grade Nature Scout</h2>
-        </div>
-        <div
-          id="progress-pills"
-          class="text-sm bg-green-800 px-3 py-1 rounded-full font-bold"
-        >
-          0 / 8 Found
-        </div>
-      </header>
-
-      <!-- Viewport -->
-      <main
-        class="flex-grow relative bg-gray-200 flex flex-col overflow-hidden"
-      >
-        <div
-          id="mission-view"
-          class="p-3 space-y-2 flex flex-col h-full overflow-hidden"
-        >
-          <div
-            class="bg-yellow-50 border-2 border-yellow-200 p-2 rounded-xl shadow-sm flex items-center justify-between shrink-0"
-          >
-            <div class="flex items-center space-x-3">
-              <span class="text-2xl">👀</span>
-              <p
-                id="main-instr"
-                class="text-gray-800 font-bold leading-tight text-sm"
-              >
-                Tap a square, then photograph that plant part or kind of rock during your schoolyard walk.
-              </p>
+    <div id="game-container" class="nature-app-shell hidden">
+      <section class="section nature-app-section">
+        <div class="container is-max-desktop nature-app-container">
+          <header class="box nature-topbar">
+            <div class="nature-topbar-brand">
+              <span class="icon nature-topbar-icon">
+                <i class="fas fa-seedling"></i>
+              </span>
+              <div>
+                <h2 class="title is-5 mb-0 has-text-white">
+                  First Grade Nature Scout
+                </h2>
+                <p class="nature-topbar-subtitle">Plant and Rock Hunt</p>
+              </div>
             </div>
-            <button
-              onclick="speakMainInstruction()"
-              class="bg-green-100 p-2 rounded-full border-2 border-green-500 text-green-700 btn-bounce"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <!-- Grid of Items -->
-          <div
-            id="photo-grid"
-            class="grid grid-cols-2 md:grid-cols-4 gap-2 flex-grow h-full overflow-hidden"
-          >
-            <!-- Cards injected here -->
-          </div>
-        </div>
-
-        <!-- Camera View -->
-        <div id="camera-view" class="hidden absolute inset-0 z-40 bg-black">
-          <div
-            id="camera-instr-container"
-            class="absolute top-6 left-0 right-0 z-50 flex flex-col items-center space-y-2 px-4"
-          >
-            <span
-              class="bg-black bg-opacity-70 text-white px-4 py-2 rounded-full text-lg font-bold border-2 border-yellow-400 flex items-center space-x-2"
-            >
-              <span>Find: <span id="target-label"></span></span>
-              <button onclick="speakCurrentTask()" class="ml-2 text-yellow-400">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                  />
-                </svg>
-              </button>
-            </span>
-          </div>
-          <video id="video-preview" autoplay playsinline></video>
-          <div
-            class="camera-overlay absolute inset-0 pointer-events-none flex items-center justify-center"
-          >
-            <div class="w-64 h-64"></div>
-          </div>
-          <div
-            class="absolute bottom-10 left-0 right-0 flex justify-around items-center px-10"
-          >
-            <button
-              onclick="closeCamera()"
-              class="bg-red-500 text-white p-4 rounded-full shadow-lg btn-bounce"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-8 w-8"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <button
-              onclick="takePhoto()"
-              class="bg-white p-2 rounded-full shadow-2xl border-4 border-gray-300 btn-bounce"
-            >
-              <div
-                class="w-16 h-16 bg-red-500 rounded-full border-4 border-white"
-              ></div>
-            </button>
-          </div>
-        </div>
-
-        <!-- Property Selection Modal -->
-        <div
-          id="property-modal"
-          class="hidden absolute inset-0 z-50 bg-green-900 bg-opacity-95 flex flex-col items-center justify-center p-6 text-white"
-        >
-          <div class="bg-white rounded-3xl p-6 text-gray-800 w-full max-w-sm">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xl font-black flex items-center">
-                <span class="mr-2">🔍</span> Think About It!
-              </h3>
-              <button
-                onclick="speakPropertyQuestion()"
-                class="bg-blue-100 text-blue-600 p-2 rounded-full"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                  />
-                </svg>
-              </button>
+            <div id="progress-pills" class="tag is-success is-medium nature-progress">
+              0 / 8 Found
             </div>
-            <p id="property-question" class="mb-6 font-bold text-lg">
-              How does this material feel?
-            </p>
-            <div id="property-options" class="grid grid-cols-2 gap-4"></div>
-          </div>
-        </div>
-      </main>
+          </header>
 
-      <!-- Footer Info -->
-      <footer
-        class="bg-white border-t p-2 flex justify-between items-center text-gray-400 text-[9px] font-bold uppercase tracking-widest shrink-0"
-      >
-        <span></span>
-        <span>LS.1.1 / ESS.1.2</span>
-      </footer>
+          <main class="nature-stage">
+            <section id="mission-view" class="nature-panel">
+              <div class="box nature-instruction-box">
+                <div class="nature-instruction-copy">
+                  <span class="icon nature-instruction-icon">
+                    <i class="fas fa-binoculars"></i>
+                  </span>
+                  <p id="main-instr" class="nature-instruction-text">
+                    Tap a square, then photograph that plant part or kind of rock during your schoolyard walk.
+                  </p>
+                </div>
+                <button
+                  onclick="speakMainInstruction()"
+                  class="button is-success is-light is-rounded nature-audio-button btn-bounce"
+                >
+                  <span class="icon"><i class="fas fa-volume-up"></i></span>
+                </button>
+              </div>
+
+              <div id="photo-grid" class="nature-photo-grid">
+                <!-- Cards injected here -->
+              </div>
+            </section>
+
+            <div id="camera-view" class="hidden nature-camera-view">
+              <div id="camera-instr-container" class="nature-camera-banner-wrap">
+                <div class="nature-camera-banner">
+                  <span class="nature-camera-banner-text">
+                    <i class="fas fa-camera-retro"></i>
+                    <span>Find: <span id="target-label"></span></span>
+                  </span>
+                  <button
+                    onclick="speakCurrentTask()"
+                    class="button is-small is-warning is-light is-rounded"
+                  >
+                    <span class="icon"><i class="fas fa-volume-up"></i></span>
+                  </button>
+                </div>
+              </div>
+              <video id="video-preview" autoplay playsinline></video>
+              <div class="camera-overlay nature-camera-overlay">
+                <div class="nature-camera-target"></div>
+              </div>
+              <div class="nature-camera-controls">
+                <button
+                  onclick="closeCamera()"
+                  class="button is-danger is-rounded nature-camera-close btn-bounce"
+                >
+                  <span class="icon is-medium"><i class="fas fa-times fa-lg"></i></span>
+                </button>
+                <button
+                  onclick="takePhoto()"
+                  class="nature-camera-shutter btn-bounce"
+                >
+                  <span class="nature-camera-shutter-inner"></span>
+                </button>
+              </div>
+            </div>
+          </main>
+
+          <footer class="box nature-footer">
+            <span class="nature-footer-standard">LS.1.1 / ESS.1.2</span>
+          </footer>
+        </div>
+      </section>
     </div>
 
     <!-- Success Modal -->
-    <div
-      id="success-modal"
-      class="hidden fixed inset-0 z-[60] bg-black bg-opacity-80 flex items-center justify-center p-4"
-    >
-      <div class="bg-white rounded-3xl p-6 text-center max-w-sm shadow-2xl">
-        <div class="text-5xl mb-2 animate-bounce">🌟</div>
-        <div class="flex justify-center items-center space-x-2 mb-1">
-          <h3 class="text-2xl font-black text-green-700">Science Fact!</h3>
+    <div id="property-modal" class="hidden nature-overlay">
+      <div class="nature-dialog box">
+        <div class="nature-dialog-header">
+          <h3 class="title is-4 mb-0">
+            <span class="icon has-text-info">
+              <i class="fas fa-search"></i>
+            </span>
+            <span>Think About It!</span>
+          </h3>
           <button
-            onclick="speakCurrentFact()"
-            class="bg-green-100 text-green-600 p-2 rounded-full"
+            onclick="speakPropertyQuestion()"
+            class="button is-info is-light is-rounded"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-              />
-            </svg>
+            <span class="icon"><i class="fas fa-volume-up"></i></span>
           </button>
         </div>
-        <div
-          id="success-fact"
-          class="bg-green-50 p-4 rounded-xl text-gray-700 font-bold text-sm mb-6 border-l-4 border-green-500 italic"
-        ></div>
+        <p id="property-question" class="nature-dialog-question">
+          How does this material feel?
+        </p>
+        <div id="property-options" class="nature-option-grid"></div>
+      </div>
+    </div>
+
+    <div id="success-modal" class="hidden nature-overlay nature-overlay-dark">
+      <div class="nature-dialog box nature-success-dialog">
+        <div class="nature-success-badge">
+          <span class="icon is-large"><i class="fas fa-star"></i></span>
+        </div>
+        <div class="nature-dialog-header nature-dialog-header-center">
+          <h3 class="title is-3 mb-0 has-text-success-dark">Science Fact!</h3>
+          <button
+            onclick="speakCurrentFact()"
+            class="button is-success is-light is-rounded"
+          >
+            <span class="icon"><i class="fas fa-volume-up"></i></span>
+          </button>
+        </div>
+        <div id="success-fact" class="nature-success-fact"></div>
         <button
           onclick="closeSuccess()"
-          class="bg-green-600 text-white font-black py-4 px-8 rounded-full w-full shadow-lg btn-bounce text-xl uppercase"
+          class="button is-success is-large is-fullwidth nature-success-button btn-bounce"
         >
-          ADD TO GUIDE
+          <span class="icon"><i class="fas fa-book-open"></i></span>
+          <span>Add to Guide</span>
         </button>
       </div>
     </div>

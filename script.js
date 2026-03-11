@@ -88,47 +88,48 @@ function renderGrid() {
       card.onclick = () => openCamera(task.id);
       card.type = 'button';
     }
-    card.className = `mission-card relative h-full w-full rounded-2xl overflow-hidden border-4 shadow-sm flex flex-col items-center justify-center ${photo ? 'border-green-500 bg-white' : 'border-dashed border-gray-400 bg-white'}`;
+    card.className = `mission-card ${photo ? 'mission-card-complete' : 'mission-card-empty'}`;
 
     if (photo) {
       const obs = observations[task.id]
-        ? `<div class="bg-yellow-300 text-black text-[8px] px-1 rounded-sm mt-0.5">${observations[task.id]}</div>`
+        ? `<div class="saved-card-observation">${observations[task.id]}</div>`
         : '';
       card.innerHTML = `
-                        <img src="${photo}" class="absolute inset-0 w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-green-500 bg-opacity-10 pointer-events-none"></div>
-                        <div class="absolute top-2 right-2 w-[5.25rem]">
-                            <button type="button" class="saved-card-action bg-red-500 text-white" onclick="event.stopPropagation(); deletePhoto('${task.id}')">
-                                <span class="text-base leading-none">🗑️</span>
-                                <span>Delete</span>
+                        <img src="${photo}" class="mission-photo">
+                        <div class="mission-photo-overlay"></div>
+                        <div class="saved-card-toolbar">
+                            <button type="button" class="saved-card-action button is-danger is-rounded" onclick="event.stopPropagation(); deletePhoto('${task.id}')">
+                                <span class="icon is-small"><i class="fas fa-trash-alt"></i></span>
                             </button>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 bg-green-700 text-white text-[9px] p-1 font-bold leading-none flex items-center justify-between gap-1">
-                            <button type="button" class="saved-card-audio" onclick="event.stopPropagation(); speakTaskFact('${task.id}')">🔊</button>
-                            <div class="flex-1 text-center">${task.label} ✅ ${obs}</div>
-                            <div class="w-5 shrink-0"></div>
+                        <div class="saved-card-footer">
+                            <button type="button" class="saved-card-audio" onclick="event.stopPropagation(); speakTaskFact('${task.id}')">
+                              <i class="fas fa-volume-up"></i>
+                            </button>
+                            <div class="saved-card-label">${task.label} &#10003; ${obs}</div>
+                            <div class="saved-card-spacer"></div>
                         </div>
                     `;
     } else {
       card.innerHTML = `
-                        <div class="absolute top-1 left-1 bg-gray-100 text-gray-500 text-[8px] px-1.5 py-0.5 rounded-full font-bold">${task.standard}</div>
-                        <div class="text-3xl md:text-5xl mb-1">${task.emoji}</div>
-                        <div class="text-[10px] md:text-sm font-black text-gray-700 uppercase leading-none">${task.label}</div>
-                        <div class="absolute top-1 right-1 text-green-600" onclick="event.stopPropagation(); speakTaskClue('${task.id}')">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
-                        </div>
+                        <div class="mission-standard">${task.standard}</div>
+                        <div class="mission-emoji">${task.emoji}</div>
+                        <div class="mission-label">${task.label}</div>
+                        <button type="button" class="mission-audio-trigger" onclick="event.stopPropagation(); speakTaskClue('${task.id}')">
+                          <i class="fas fa-volume-up"></i>
+                        </button>
                     `;
     }
     grid.appendChild(card);
   });
   const foundCount = Object.keys(photos).length;
-  document.getElementById('progress-pills').innerText =
-    `${foundCount} / ${tasks.length} Found`;
+  const progressPill = document.getElementById('progress-pills');
+  progressPill.innerText = `${foundCount} / ${tasks.length} Found`;
   if (foundCount === tasks.length) {
-    document
-      .getElementById('progress-pills')
-      .classList.replace('bg-green-800', 'bg-yellow-500');
-    document.getElementById('progress-pills').innerText = `Gold Scout! 🏆`;
+    progressPill.classList.add('is-complete');
+    progressPill.innerText = `Gold Scout! 🏆`;
+  } else {
+    progressPill.classList.remove('is-complete');
   }
 }
 
@@ -185,10 +186,9 @@ function showPropertySelection(task) {
   optionsContainer.innerHTML = '';
   task.options.forEach((opt) => {
     const btn = document.createElement('button');
-    btn.className =
-      'bg-green-600 text-white font-black py-4 rounded-2xl text-xl btn-bounce flex flex-col items-center justify-center gap-1 leading-tight';
+    btn.className = 'button nature-option-button btn-bounce';
     btn.innerHTML = `
-      <span class="text-3xl leading-none">${getOptionIcon(opt)}</span>
+      <span class="nature-option-icon">${getOptionIcon(opt)}</span>
       <span>${opt}</span>
     `;
     btn.onclick = () => {
