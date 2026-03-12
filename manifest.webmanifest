@@ -1,0 +1,25 @@
+{
+  "name": "First Grade Nature Scout",
+  "short_name": "Nature Scout",
+  "description": "A first grade plant and rock scavenger hunt with read-aloud support.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef7e7",
+  "theme_color": "#1d7346",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
