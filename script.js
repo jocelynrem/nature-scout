@@ -78,7 +78,7 @@ function startGame() {
   document.getElementById('start-screen').classList.add('hidden');
   document.getElementById('game-container').classList.remove('hidden');
   renderGrid();
-  playAudio('intro');
+  playAudio('intro', { showFallbackAlert: false });
 }
 
 function renderGrid() {
@@ -386,34 +386,34 @@ function attachGuideSwipeHandlers() {
 function speakCurrentTask() {
   const task = getTaskById(activeTaskId);
   if (!task) return;
-  playAudio(`task-${task.id}-clue`);
+  playAudio(`task-${task.id}-clue`, { showFallbackAlert: false });
 }
 
 function speakPropertyQuestion() {
   const task = getTaskById(activeTaskId);
   if (!task) return;
-  playAudio(`task-${task.id}-question`);
+  playAudio(`task-${task.id}-question`, { showFallbackAlert: false });
 }
 
 function speakCurrentFact() {
   const task = getTaskById(activeTaskId);
   if (!task) return;
-  playAudio(`task-${task.id}-fact`);
+  playAudio(`task-${task.id}-fact`, { showFallbackAlert: false });
 }
 
 function speakMainInstruction() {
-  playAudio('main-instruction');
+  playAudio('main-instruction', { showFallbackAlert: true });
 }
 
 function speakTaskClue(taskId) {
-  playAudio(`task-${taskId}-clue`);
+  playAudio(`task-${taskId}-clue`, { showFallbackAlert: true });
 }
 
 function speakTaskFact(taskId) {
-  playAudio(`task-${taskId}-fact`);
+  playAudio(`task-${taskId}-fact`, { showFallbackAlert: true });
 }
 
-async function playAudio(audioId) {
+async function playAudio(audioId, { showFallbackAlert = true } = {}) {
   stopSpeaking();
   const audio = new Audio(`audio/${audioId}.wav`);
   currentAudio = audio;
@@ -429,7 +429,9 @@ async function playAudio(audioId) {
       currentAudio = null;
     }
     console.warn(`Audio playback failed for ${audioId}`, error);
-    showAudioFallback(audioId);
+    if (showFallbackAlert) {
+      showAudioFallback(audioId);
+    }
   };
 
   audio.addEventListener(
