@@ -152,6 +152,7 @@ async function openCamera(taskId) {
   activeTaskId = taskId;
   const task = getTaskById(taskId);
   document.getElementById('target-label').textContent = task.label;
+  speakCurrentTask();
   const video = document.getElementById('video-preview');
   try {
     stream = await navigator.mediaDevices.getUserMedia({
@@ -159,7 +160,6 @@ async function openCamera(taskId) {
     });
     video.srcObject = stream;
     document.getElementById('camera-view').classList.remove('hidden');
-    speakCurrentTask();
   } catch (err) {
     alert('Check camera settings!');
   }
