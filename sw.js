@@ -1,8 +1,8 @@
 importScripts('content.js');
 
-const CACHE_NAME = 'nature-scout-v1';
-const RUNTIME_CACHE = 'nature-scout-runtime-v1';
-const CDN_CACHE = 'nature-scout-cdn-v1';
+const CACHE_NAME = 'nature-scout-v3';
+const RUNTIME_CACHE = 'nature-scout-runtime-v3';
+const CDN_CACHE = 'nature-scout-cdn-v3';
 
 const coreAssets = [
   './',
@@ -12,6 +12,9 @@ const coreAssets = [
   'content.js',
   'manifest.webmanifest',
   'favicon.svg',
+  'icon-192.png',
+  'icon-512.png',
+  'apple-touch-icon.png',
 ];
 
 const audioAssets = [

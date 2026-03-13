@@ -5,38 +5,39 @@ let photos = {};
 let observations = {};
 let stream = null;
 let currentAudio = null;
+let guideAutoOpened = false;
 const optionIcons = {
-  Leaves: '🍃',
-  Roots: '🌱',
-  Rocks: '🪨',
-  Water: '💧',
-  'Helps hold it up': '🪴',
-  'Makes it bark': '🐶',
-  'Turns it to metal': '🔩',
-  'Makes it hop': '🐸',
-  'New plants': '🌼',
-  Shoes: '👟',
-  Clouds: '☁️',
-  Pebbles: '🪨',
-  Dark: '⬛',
-  Light: '💡',
-  Bumpy: '⛰️',
-  'Any of these': '✅',
-  'About fist-size': '✊',
-  'Bigger than a car': '🚗',
-  'Tiny as sand': '⏺️',
-  'Flat as paper': '📄',
-  Smooth: '🫧',
-  Fuzzy: '🐻',
-  Squishy: '🧽',
-  Sticky: '🍯',
-  'It looks shiny': '✨',
-  'It melts': '🫠',
-  'It barks': '🐕',
-  'It grows leaves': '🍀',
-  Liquid: '🥤',
-  Fluffy: '🪶',
-  'Hot chocolate': '☕',
+  'I noticed leaves': '🍃',
+  'I noticed roots': '🌱',
+  'I noticed rocks': '🪨',
+  'I noticed water': '💧',
+  'I noticed it holds the plant up': '🪴',
+  'I noticed it makes bark': '🐶',
+  'I noticed it turns to metal': '🔩',
+  'I noticed it makes the plant hop': '🐸',
+  'I noticed new plants': '🌼',
+  'I noticed shoes': '👟',
+  'I noticed clouds': '☁️',
+  'I noticed pebbles': '🪨',
+  'I noticed dark soil': '⬛',
+  'I noticed light soil': '💡',
+  'I noticed bumpy soil': '⛰️',
+  'I noticed more than one of these': '✅',
+  'I noticed it is about fist-size': '✊',
+  'I noticed it is bigger than a car': '🚗',
+  'I noticed it is tiny as sand': '⏺️',
+  'I noticed it is flat as paper': '📄',
+  'I noticed it feels smooth': '🫧',
+  'I noticed it feels fuzzy': '🐻',
+  'I noticed it feels squishy': '🧽',
+  'I noticed it feels sticky': '🍯',
+  'I noticed it looks shiny': '✨',
+  'I noticed it melts': '🫠',
+  'I noticed it barks': '🐕',
+  'I noticed it grows leaves': '🍀',
+  'I noticed it feels liquid': '🥤',
+  'I noticed it feels fluffy': '🪶',
+  'I noticed it feels like hot chocolate': '☕',
 };
 
 function getTaskById(taskId) {
@@ -124,7 +125,9 @@ function renderGrid() {
   });
   const foundCount = Object.keys(photos).length;
   const progressPill = document.getElementById('progress-pills');
+  const guideButton = document.getElementById('guide-button');
   progressPill.innerText = `${foundCount} / ${tasks.length} Found`;
+  guideButton.classList.toggle('hidden', foundCount === 0);
   if (foundCount === tasks.length) {
     progressPill.classList.add('is-complete');
     progressPill.innerText = `Gold Scout! 🏆`;
@@ -136,6 +139,7 @@ function renderGrid() {
 function deletePhoto(taskId) {
   delete photos[taskId];
   delete observations[taskId];
+  guideAutoOpened = false;
   if (activeTaskId === taskId) {
     activeTaskId = null;
   }
@@ -189,7 +193,7 @@ function showPropertySelection(task) {
     btn.className = 'button nature-option-button btn-bounce';
     btn.innerHTML = `
       <span class="nature-option-icon">${getOptionIcon(opt)}</span>
-      <span>${opt}</span>
+      <span class="nature-option-text">${opt}</span>
     `;
     btn.onclick = () => {
       observations[task.id] = opt;
@@ -216,6 +220,88 @@ function closeSuccess() {
   document.getElementById('success-modal').classList.add('hidden');
   stopSpeaking();
   renderGrid();
+  if (Object.keys(photos).length === tasks.length && !guideAutoOpened) {
+    guideAutoOpened = true;
+    openGuide();
+  }
+}
+
+function openGuide() {
+  if (!Object.keys(photos).length) return;
+  renderGuide();
+  document.getElementById('guide-modal').classList.remove('hidden');
+}
+
+function closeGuide() {
+  document.getElementById('guide-modal').classList.add('hidden');
+  stopSpeaking();
+}
+
+function renderGuide() {
+  const guideBook = document.getElementById('guide-book');
+  const foundTasks = tasks.filter((task) => photos[task.id]);
+
+  guideBook.innerHTML = `
+    <article class="nature-guide-page nature-guide-cover">
+      <div class="nature-guide-sparkle nature-guide-sparkle-one">🍓</div>
+      <div class="nature-guide-sparkle nature-guide-sparkle-two">🦋</div>
+      <div class="nature-guide-cover-badge">📖</div>
+      <p class="nature-guide-cover-kicker">First Grade Field Notes</p>
+      <h4 class="nature-guide-cover-title">Nature Scout Booklet</h4>
+      <p class="nature-guide-cover-text">
+        Plant parts, rocks, and earth materials we spotted on our outdoor science walk.
+      </p>
+      <p class="nature-guide-cover-tip">Swipe to turn the pages.</p>
+    </article>
+  `;
+
+  foundTasks.forEach((task, index) => {
+    const page = document.createElement('article');
+    const observation = observations[task.id]
+      ? `<p class="nature-guide-note"><span class="nature-guide-note-label">I noticed</span>${observations[task.id]}</p>`
+      : '';
+    page.className = 'nature-guide-page';
+    page.innerHTML = `
+      <div class="nature-guide-page-card">
+        <div class="nature-guide-page-doodle">${index % 2 === 0 ? '🌼' : '🐞'}</div>
+        <div class="nature-guide-page-photo-wrap">
+          <img src="${photos[task.id]}" alt="${task.label}" class="nature-guide-photo" />
+          <div class="nature-guide-photo-sticker">${task.emoji}</div>
+        </div>
+        <div class="nature-guide-page-body">
+          <div class="nature-guide-page-meta">
+            <span class="nature-guide-standard">${task.standard}</span>
+            <span class="nature-guide-page-count">Page ${index + 1}</span>
+          </div>
+          <h4 class="nature-guide-page-title">${task.label}</h4>
+          ${observation}
+          <p class="nature-guide-fact">${task.fact}</p>
+          <button
+            type="button"
+            class="button is-success is-light is-rounded nature-guide-audio"
+            onclick="speakTaskFact('${task.id}')"
+          >
+            <span class="icon"><i class="fas fa-volume-up"></i></span>
+            <span>Read This Page</span>
+          </button>
+        </div>
+      </div>
+    `;
+    guideBook.appendChild(page);
+  });
+
+  const finalePage = document.createElement('article');
+  finalePage.className = 'nature-guide-page nature-guide-finale';
+  finalePage.innerHTML = `
+    <div class="nature-guide-finale-badge">🏆</div>
+    <h4 class="nature-guide-cover-title">Great Job, Scout!</h4>
+    <p class="nature-guide-cover-text">
+      You collected ${foundTasks.length} nature discoveries and turned them into your own mini guidebook.
+    </p>
+    <p class="nature-guide-cover-tip">Open it anytime with the Field Guide button.</p>
+  `;
+  guideBook.appendChild(finalePage);
+  guideBook.scrollTo({ left: 0, behavior: 'auto' });
 }
 
 function speakCurrentTask() {

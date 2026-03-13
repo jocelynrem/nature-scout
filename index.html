@@ -73,8 +73,19 @@
                 <p class="nature-topbar-subtitle">Plant and Rock Hunt</p>
               </div>
             </div>
-            <div id="progress-pills" class="tag is-success is-medium nature-progress">
-              0 / 8 Found
+            <div class="nature-topbar-actions">
+              <button
+                id="guide-button"
+                type="button"
+                onclick="openGuide()"
+                class="button is-warning is-light is-rounded nature-guide-button hidden"
+              >
+                <span class="icon"><i class="fas fa-book-open"></i></span>
+                <span>Field Guide</span>
+              </button>
+              <div id="progress-pills" class="tag is-success is-medium nature-progress">
+                0 / 8 Found
+              </div>
             </div>
           </header>
 
@@ -136,7 +147,7 @@
             <span class="icon has-text-info">
               <i class="fas fa-search"></i>
             </span>
-            <span>Think About It!</span>
+            <span>I Noticed...</span>
           </h3>
           <button
             onclick="speakPropertyQuestion()"
@@ -146,7 +157,7 @@
           </button>
         </div>
         <p id="property-question" class="nature-dialog-question">
-          How does this material feel?
+          I noticed this material...
         </p>
         <div id="property-options" class="nature-option-grid"></div>
       </div>
@@ -174,6 +185,28 @@
           <span class="icon"><i class="fas fa-book-open"></i></span>
           <span>Add to Guide</span>
         </button>
+      </div>
+    </div>
+
+    <div id="guide-modal" class="hidden nature-overlay nature-overlay-book">
+      <div class="nature-guide-shell">
+        <div class="nature-guide-topbar">
+          <div>
+            <p class="nature-guide-kicker">Swipe Through Your Finds</p>
+            <h3 class="title is-4 mb-0">My Nature Guide</h3>
+          </div>
+          <button
+            type="button"
+            onclick="closeGuide()"
+            class="button is-success is-light is-rounded"
+          >
+            <span class="icon"><i class="fas fa-times"></i></span>
+          </button>
+        </div>
+
+        <div id="guide-book" class="nature-guide-book">
+          <!-- Guide pages injected here -->
+        </div>
       </div>
     </div>
 
