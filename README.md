@@ -61,6 +61,19 @@ If you update the narration text in `content.js`, rerun:
 node scripts/generate-audio.cjs --force
 ```
 
+## Generate PWA Icons
+
+The icon files are generated from `favicon.svg` with a small helper script:
+
+```bash
+python3 scripts/generate-pwa-icons.py
+```
+
+Notes:
+
+- This script is currently macOS-only because it uses `qlmanage` and `sips`.
+- It rewrites `icon-512.png`, `icon-192.png`, and `apple-touch-icon.png`.
+
 ## Notes
 
 - The app uses `navigator.mediaDevices.getUserMedia()` for camera capture.
