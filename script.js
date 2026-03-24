@@ -468,13 +468,20 @@ function stopSpeaking() {
 }
 
 function setFullHeight() {
+  const viewportHeight = window.visualViewport
+    ? window.visualViewport.height
+    : window.innerHeight;
   document.documentElement.style.setProperty(
     '--vh',
-    `${window.innerHeight * 0.01}px`,
+    `${viewportHeight * 0.01}px`,
   );
 }
 
 window.addEventListener('resize', setFullHeight);
+window.addEventListener('orientationchange', setFullHeight);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setFullHeight);
+}
 setFullHeight();
 
 if ('serviceWorker' in navigator) {
