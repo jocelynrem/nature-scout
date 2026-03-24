@@ -27,6 +27,16 @@ Then open `http://localhost:8000`.
 
 The app can then be installed as a PWA from supported browsers.
 
+## Run Tests
+
+This project includes a lightweight automated test suite using Node's built-in test runner.
+
+```bash
+npm test
+```
+
+The tests cover the booklet UI logic and CSS guardrails that keep the guide visible and scrollable on smaller screens.
+
 ## Generate Read-Aloud Audio
 
 The app is set up to play local audio files so students do not call the Gemini API directly.
