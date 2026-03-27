@@ -172,12 +172,16 @@ function createBaseDom(document) {
     ['div', 'photo-grid'],
     ['div', 'progress-pills'],
     ['button', 'guide-button'],
+    ['button', 'restart-button'],
     ['div', 'guide-modal'],
     ['div', 'guide-book'],
     ['div', 'guide-track'],
     ['button', 'guide-prev'],
     ['button', 'guide-next'],
     ['div', 'guide-page-indicator'],
+    ['div', 'camera-view'],
+    ['div', 'property-modal'],
+    ['div', 'success-modal'],
   ].forEach(([tagName, id]) => {
     const element = document.createElement(tagName);
     element.id = id;
@@ -187,7 +191,7 @@ function createBaseDom(document) {
   });
 }
 
-function loadApp() {
+function loadApp(initialStorage = {}) {
   const rootDir = path.resolve(__dirname, '..', '..');
   const document = new FakeDocument();
   createBaseDom(document);
@@ -195,6 +199,7 @@ function loadApp() {
   const windowListeners = {};
   const visualViewportListeners = {};
   const audioEvents = {};
+  const storage = new Map(Object.entries(initialStorage));
 
   function addWindowListener(type, listener) {
     if (!windowListeners[type]) {
@@ -212,6 +217,7 @@ function loadApp() {
     document,
     navigator: {},
     alert: () => {},
+    confirm: () => true,
     Audio: class FakeAudio {
       constructor(src) {
         this.src = src;
@@ -235,6 +241,17 @@ function loadApp() {
 
   sandbox.window = sandbox;
   sandbox.globalThis = sandbox;
+  sandbox.window.localStorage = {
+    getItem(key) {
+      return storage.has(key) ? storage.get(key) : null;
+    },
+    setItem(key, value) {
+      storage.set(key, String(value));
+    },
+    removeItem(key) {
+      storage.delete(key);
+    },
+  };
   sandbox.window.innerHeight = 900;
   sandbox.window.visualViewport = {
     height: 700,
@@ -261,6 +278,7 @@ function loadApp() {
     document,
     windowListeners,
     visualViewportListeners,
+    storage,
     run(code) {
       return vm.runInContext(code, sandbox);
     },

@@ -8,6 +8,7 @@ let currentAudio = null;
 let guideAutoOpened = false;
 let currentGuidePage = 0;
 let guideTouchStartX = null;
+const STORAGE_KEY = 'nature-scout-game-state-v1';
 const optionIcons = {
   Leaves: '🍃',
   Roots: '🌱',
@@ -41,6 +42,60 @@ const optionIcons = {
   Fluffy: '🪶',
   'Like hot chocolate': '☕',
 };
+
+function getStorage() {
+  try {
+    return window.localStorage;
+  } catch (error) {
+    console.warn('Local storage is unavailable.', error);
+    return null;
+  }
+}
+
+function saveGameState({ started = true } = {}) {
+  const storage = getStorage();
+  if (!storage) return;
+
+  storage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      started,
+      photos,
+      observations,
+      completed: Object.keys(photos).length === tasks.length,
+    }),
+  );
+}
+
+function loadGameState() {
+  const storage = getStorage();
+  if (!storage) return null;
+
+  const savedState = storage.getItem(STORAGE_KEY);
+  if (!savedState) return null;
+
+  try {
+    const parsedState = JSON.parse(savedState);
+    return {
+      started: Boolean(parsedState.started),
+      photos: parsedState.photos && typeof parsedState.photos === 'object' ? parsedState.photos : {},
+      observations:
+        parsedState.observations && typeof parsedState.observations === 'object'
+          ? parsedState.observations
+          : {},
+    };
+  } catch (error) {
+    console.warn('Saved game state could not be read.', error);
+    storage.removeItem(STORAGE_KEY);
+    return null;
+  }
+}
+
+function clearGameState() {
+  const storage = getStorage();
+  if (!storage) return;
+  storage.removeItem(STORAGE_KEY);
+}
 
 function getTaskById(taskId) {
   return tasks.find((task) => task.id === taskId) || null;
@@ -78,6 +133,7 @@ function startGame() {
   document.getElementById('start-screen').classList.add('hidden');
   document.getElementById('game-container').classList.remove('hidden');
   renderGrid();
+  saveGameState();
   playAudio('intro', { showFallbackAlert: false });
 }
 
@@ -146,6 +202,7 @@ function deletePhoto(taskId) {
     activeTaskId = null;
   }
   renderGrid();
+  saveGameState();
 }
 
 async function openCamera(taskId) {
@@ -179,6 +236,7 @@ function takePhoto() {
   canvas.height = video.videoHeight;
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
   photos[activeTaskId] = canvas.toDataURL('image/png');
+  saveGameState();
   closeCamera();
   const task = getTaskById(activeTaskId);
   if (task.question) {
@@ -202,6 +260,7 @@ function showPropertySelection(task) {
     `;
     btn.onclick = () => {
       observations[task.id] = opt;
+      saveGameState();
       modal.classList.add('hidden');
       showSuccess(task);
     };
@@ -241,6 +300,30 @@ function openGuide() {
 function closeGuide() {
   document.getElementById('guide-modal').classList.add('hidden');
   stopSpeaking();
+}
+
+function restartGame() {
+  const shouldReset = window.confirm(
+    'Restart the game and erase this saved field guide so you can start fresh?',
+  );
+
+  if (!shouldReset) return;
+
+  closeCamera();
+  closeGuide();
+  document.getElementById('property-modal').classList.add('hidden');
+  document.getElementById('success-modal').classList.add('hidden');
+
+  activeTaskId = null;
+  photos = {};
+  observations = {};
+  guideAutoOpened = false;
+  currentGuidePage = 0;
+
+  clearGameState();
+  renderGrid();
+  document.getElementById('game-container').classList.add('hidden');
+  document.getElementById('start-screen').classList.remove('hidden');
 }
 
 function renderGuide() {
@@ -483,6 +566,14 @@ if (window.visualViewport) {
   window.visualViewport.addEventListener('resize', setFullHeight);
 }
 setFullHeight();
+const savedGameState = loadGameState();
+if (savedGameState?.started) {
+  photos = savedGameState.photos;
+  observations = savedGameState.observations;
+  document.getElementById('start-screen').classList.add('hidden');
+  document.getElementById('game-container').classList.remove('hidden');
+  renderGrid();
+}
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
