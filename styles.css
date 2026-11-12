@@ -1018,14 +1018,18 @@ body {
   border-radius: 1.2rem;
   padding: 0.42rem 0.75rem;
   background: rgba(255, 255, 255, 0.72);
-  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
   flex-shrink: 0;
 }
 
 .nature-footer .portfolio-return {
   display: inline-block;
-  margin-inline-start: 0.75rem;
+  margin-inline-start: auto;
   padding-block: 0.2rem;
+  white-space: nowrap;
   color: #254d3a;
   font-size: 0.8125rem;
   text-decoration: underline;
