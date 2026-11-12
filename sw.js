@@ -1,13 +1,13 @@
 importScripts('content.js');
 
-const CACHE_NAME = 'nature-scout-v8';
+const CACHE_NAME = 'nature-scout-v9';
 const RUNTIME_CACHE = 'nature-scout-runtime-v4';
 const CDN_CACHE = 'nature-scout-cdn-v4';
 
 const coreAssets = [
   './',
   'index.html',
-  'styles.css',
+  'styles.css?v=portfolio-footer',
   'script.js',
   'content.js',
   'manifest.webmanifest',
@@ -39,7 +39,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((key) => ![CACHE_NAME, RUNTIME_CACHE, CDN_CACHE].includes(key))
+          .filter((key) => key.startsWith('nature-scout-') && ![CACHE_NAME, RUNTIME_CACHE, CDN_CACHE].includes(key))
           .map((key) => caches.delete(key)),
       ),
     ),
@@ -57,7 +57,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   if (url.origin === self.location.origin) {
-    event.respondWith(cacheFirst(request, RUNTIME_CACHE));
+    event.respondWith(request.mode === 'navigate' ? loadPage(request) : cacheFirst(request, RUNTIME_CACHE));
     return;
   }
 
@@ -75,18 +75,19 @@ async function cacheFirst(request, cacheName) {
     return cached;
   }
 
+  const response = await fetch(request);
+  const cache = await caches.open(cacheName);
+  cache.put(request, response.clone());
+  return response;
+}
+
+async function loadPage(request) {
   try {
-    const response = await fetch(request);
-    const cache = await caches.open(cacheName);
-    cache.put(request, response.clone());
-    return response;
+    return await fetch(request, { cache: 'no-cache' });
   } catch (error) {
-    if (request.mode === 'navigate') {
-      const fallback = await caches.match('index.html');
-      if (fallback) {
-        return fallback;
-      }
-    }
+    const cache = await caches.open(CACHE_NAME);
+    const fallback = await cache.match('index.html');
+    if (fallback) return fallback;
     throw error;
   }
 }
