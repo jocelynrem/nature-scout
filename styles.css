@@ -1022,6 +1022,16 @@ body {
   flex-shrink: 0;
 }
 
+.nature-footer .portfolio-return {
+  display: inline-block;
+  margin-inline-start: 0.75rem;
+  padding-block: 0.2rem;
+  color: #254d3a;
+  font-size: 0.8125rem;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
 .nature-footer-standard {
   font-size: 0.68rem;
   font-weight: 900;
