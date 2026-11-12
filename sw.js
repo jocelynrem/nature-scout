@@ -1,6 +1,6 @@
 importScripts('content.js');
 
-const CACHE_NAME = 'nature-scout-v7';
+const CACHE_NAME = 'nature-scout-v8';
 const RUNTIME_CACHE = 'nature-scout-runtime-v4';
 const CDN_CACHE = 'nature-scout-cdn-v4';
 

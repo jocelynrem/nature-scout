@@ -1032,7 +1032,9 @@ body {
 
 .nature-footer .portfolio-return,
 .nature-start-footer .portfolio-return {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
   margin-inline-start: auto;
   padding-block: 0.2rem;
   white-space: nowrap;
