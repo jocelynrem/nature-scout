@@ -1025,7 +1025,13 @@ body {
   flex-shrink: 0;
 }
 
-.nature-footer .portfolio-return {
+.nature-start-footer {
+  display: flex;
+  padding: 0 0.75rem 0.75rem;
+}
+
+.nature-footer .portfolio-return,
+.nature-start-footer .portfolio-return {
   display: inline-block;
   margin-inline-start: auto;
   padding-block: 0.2rem;
@@ -1034,6 +1040,10 @@ body {
   font-size: 0.8125rem;
   text-decoration: underline;
   text-underline-offset: 0.18em;
+}
+
+.nature-start-footer .portfolio-return {
+  color: #fff;
 }
 
 .nature-footer-standard {
